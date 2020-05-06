@@ -14,7 +14,8 @@ def plot_cross_val_selection():
 
     param_grid = {'C': [0.001, 0.01, 0.1, 1, 10, 100],
                   'gamma': [0.001, 0.01, 0.1, 1, 10, 100]}
-    grid_search = GridSearchCV(SVC(), param_grid, cv=5)
+    grid_search = GridSearchCV(SVC(), param_grid, cv=5,
+                               return_train_score=True)
     grid_search.fit(X_trainval, y_trainval)
     results = pd.DataFrame(grid_search.cv_results_)[15:]
 
@@ -23,7 +24,7 @@ def plot_cross_val_selection():
     plt.xlim(-1, len(results))
     plt.ylim(0, 1.1)
     for i, (_, row) in enumerate(results.iterrows()):
-        scores = row[['test_split%d_test_score' % i for i in range(5)]]
+        scores = row[['split%d_test_score' % i for i in range(5)]]
         marker_cv, = plt.plot([i] * 5, scores, '^', c='gray', markersize=5,
                               alpha=.5)
         marker_mean, = plt.plot(i, row.mean_test_score, 'v', c='none', alpha=1,
